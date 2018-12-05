@@ -10,26 +10,28 @@ main =
 
 -- MODEL
 
-type alias Model = String
+type alias Model = {criteria : Criteria.State}
 
 init : Model
-init = "Hello"
+init = {criteria = Criteria.init}
 
-
+criteriaConfig : Criteria.Config Msg
+criteriaConfig =
+    Criteria.config { toMsg = UpdateCriteria }
 -- UPDATE
 
-type Msg = None
+type Msg = UpdateCriteria Criteria.State
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    None  -> model
+    UpdateCriteria state  -> {model | criteria = state}
 
 -- VIEW
 
 view : Model -> Html Msg
 view model =
   div []
-    [ h1 [] [text model]
-    , Criteria.view
+    [ h1 [] [text "Criteria Package"]
+    , Criteria.view criteriaConfig model.criteria
     ]
