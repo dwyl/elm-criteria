@@ -1,51 +1,99 @@
+module Main exposing (Filter, Model, Msg(..), criteriaConfig, filters, getFilterName, getSubFilters, init, main, update, view)
+
 import Browser
-import Html exposing (Html, button, div, h1, text, p)
-import Html.Attributes exposing (..)
 import Criteria
+import Html exposing (Html, button, div, h1, p, text)
+import Html.Attributes exposing (..)
+import Set exposing (..)
 
 
 main =
-  Browser.sandbox { init = init, update = update, view = view }
+    Browser.sandbox { init = init, update = update, view = view }
+
 
 
 -- MODEL
 
-type alias Model = {criteria : Criteria.State}
+
+type alias Model =
+    { criteria : Criteria.State }
+
 
 init : Model
-init = {criteria = Criteria.init}
+init =
+    { criteria = Criteria.init }
+
 
 criteriaConfig : Criteria.Config Msg Filter
 criteriaConfig =
     Criteria.config { toMsg = UpdateCriteria, getFilterName = getFilterName, getSubFilters = getSubFilters }
+
+
+
 -- UPDATE
 
-type Msg = UpdateCriteria Criteria.State
 
-type alias Filter = (String, List String)
+type Msg
+    = UpdateCriteria Criteria.State
+
+
+
+-- see "recursive types!" section of https://elm-lang.org/0.19.0/recursive-alias
+
+
+type alias Filter =
+    ( String, SubFilters )
+
+
+type SubFilters
+    = SubFilters (List Filter)
+
 
 update : Msg -> Model -> Model
 update msg model =
-  case msg of
-    UpdateCriteria state  -> {model | criteria = state}
+    case msg of
+        UpdateCriteria state ->
+            { model | criteria = state }
+
+
 
 -- VIEW
 
+
 view : Model -> Html Msg
 view model =
-  div []
-    [ h1 [] [text "Criteria Package"]
-    , Criteria.view criteriaConfig model.criteria filters
-    , p [] [text "this is the rest of the application content"]
-    ]
+    div []
+        [ h1 [] [ text "Criteria Package" ]
+        , Criteria.view criteriaConfig model.criteria filters
+        , p [] [ text "this is the rest of the application content" ]
+        , p [] [ text "Filter selected:" ]
+        , p [] [ text <| showSelectedFilters model.criteria ]
+        ]
+
+
+showSelectedFilters : Criteria.State -> String
+showSelectedFilters state =
+    let
+        f =
+            Criteria.getSelectedFilters state
+    in
+    Set.toList f |> String.join " "
 
 
 filters : List Filter
-filters = [("filter1", ["filter11", "filter12", "filter13"]), ("filter2", ["filter21", "filter22"]), ("filter3", []), ("filter4", ["filter41"])]
+filters =
+    [ ( "filter1", SubFilters [ ( "filter11", SubFilters [] ), ( "filter12", SubFilters [] ), ( "filter13", SubFilters [] ) ] )
+    , ( "filter2", SubFilters [ ( "filter21", SubFilters [ ( "filter 212", SubFilters [] ) ] ), ( "filter22", SubFilters [] ) ] )
+    , ( "filter3", SubFilters [] )
+    , ( "filter4", SubFilters [ ( "filter41", SubFilters [] ) ] )
+    ]
 
-getFilterName : (String, List String) -> String
-getFilterName (filter, _) =
+
+getFilterName : Filter -> String
+getFilterName ( filter, _ ) =
     filter
 
-getSubFilters : Filter -> List String
-getSubFilters (_, subFilters) = subFilters
+
+getSubFilters : Filter -> List Filter
+getSubFilters ( _, SubFilters subFilters ) =
+    subFilters
