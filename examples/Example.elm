@@ -26,7 +26,13 @@ init =
 
 criteriaConfig : Criteria.Config Msg Filter
 criteriaConfig =
-    Criteria.config { toMsg = UpdateCriteria, getFilterName = getFilterName, getSubFilters = getSubFilters }
+    Criteria.config
+        { title = "My filters"
+        , toMsg = UpdateCriteria
+        , toId = getFilterId
+        , toString = getFilterName
+        , getSubFilters = getSubFilters
+        }
 
 
 
@@ -75,7 +81,7 @@ showSelectedFilters : Criteria.State -> String
 showSelectedFilters state =
     let
         f =
-            Criteria.getSelectedFilters state
+            Criteria.selectedIdFilters state
     in
     Set.toList f |> String.join " "
 
@@ -86,12 +92,18 @@ filters =
     , ( "filter2", SubFilters [ ( "filter21", SubFilters [ ( "filter 212", SubFilters [] ) ] ), ( "filter22", SubFilters [] ) ] )
     , ( "filter3", SubFilters [] )
     , ( "filter4", SubFilters [ ( "filter41", SubFilters [] ) ] )
+    , ( "filter2", SubFilters [] )
     ]
 
 
 getFilterName : Filter -> String
 getFilterName ( filter, _ ) =
     filter
+
+
+getFilterId : Filter -> String
+getFilterId ( filter, _ ) =
+    "id:" ++ filter
 
 
 getSubFilters : Filter -> List Filter
