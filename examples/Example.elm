@@ -1,4 +1,4 @@
-module Main exposing (Filter, Model, Msg(..), criteriaConfig, filters, getFilterName, getSubFilters, init, main, update, view)
+module Main exposing (main)
 
 import Browser
 import Criteria
