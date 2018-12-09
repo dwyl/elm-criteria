@@ -66,7 +66,7 @@ view model =
 ```
 ## Examples
 
-See a [live example](https://dwyl.github.io/elm-criteria/example.html) and its [code]()
+See a [live example](https://dwyl.github.io/elm-criteria/example.html) and its [code](https://github.com/dwyl/elm-criteria/blob/master/examples/Example.elm)
 
 To run the exmple on your machine:
 - clone this repository `git clone git@github.com:dwyl/elm-criteria.git && cd elm-criteria`

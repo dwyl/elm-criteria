@@ -35,24 +35,27 @@ Have a look at a live [example] and its [code]
 
 -}
 
-import Html exposing (Attribute, Html, button, div, input, label, text)
+-- import ArrowDown exposing (arrowDown)
+
+import Html exposing (Attribute, Html, button, div, input, label, span, text)
 import Html.Attributes exposing (checked, style, type_)
 import Html.Events as E
 import Json.Decode as Json
 import Set exposing (Set, empty, insert, member, remove)
+import SvgImages exposing (arrowDown, arrowUp)
 
 
 
 -- STATE
 
 
-{-| Define if the hierarchy of filters is open and the set of the selected filters
-
-    State False Set.empty
-
+{-| Define if the hierarchy of filters is open
+the set of the selected filters
+the set of filters where the sub-filters are displayed
+State False Set.empty
 -}
 type State
-    = State Bool (Set String)
+    = State Bool (Set String) (Set String)
 
 
 {-| Initialise the state, ie filters are hidden and no filter selected yet
@@ -64,7 +67,7 @@ type State
 -}
 init : State
 init =
-    State False Set.empty
+    State False Set.empty Set.empty
 
 
 
@@ -114,6 +117,20 @@ config { title, toMsg, toId, toString, getSubFilters } =
 -- VIEW
 
 
+viewToggleSubFilters : Config msg filter -> State -> filter -> Set String -> Html msg
+viewToggleSubFilters ((Config { toId, toMsg, getSubFilters }) as c) state filter openSubFilters =
+    case getSubFilters filter of
+        [] ->
+            text ""
+
+        _ ->
+            if isFilterOpen (toId filter) openSubFilters then
+                span [ onClick (hideSubFilters c filter state) toMsg ] [ arrowUp ]
+
+            else
+                span [ onClick (showSubFilters c filter state) toMsg ] [ arrowDown ]
+
+
 viewSubFilters : Config msg filter -> State -> List filter -> Html msg
 viewSubFilters configView state subFilters =
     case subFilters of
@@ -125,7 +142,7 @@ viewSubFilters configView state subFilters =
 
 
 viewFilter : Config msg filter -> State -> filter -> Html msg
-viewFilter ((Config { toMsg, toId, toString, getSubFilters }) as configView) ((State _ selectedFilters) as state) filter =
+viewFilter ((Config { toMsg, toId, toString, getSubFilters }) as configView) ((State _ selectedFilters openSubFilters) as state) filter =
     div [ style "margin-left" "20px" ]
         [ label []
             [ input
@@ -136,7 +153,12 @@ viewFilter ((Config { toMsg, toId, toString, getSubFilters }) as configView) ((S
                 []
             , text <| toString filter
             ]
-        , viewSubFilters configView state (getSubFilters filter)
+        , viewToggleSubFilters configView state filter openSubFilters
+        , if isFilterOpen (toId filter) openSubFilters then
+            viewSubFilters configView state (getSubFilters filter)
+
+          else
+            text ""
         ]
 
 
@@ -148,9 +170,9 @@ viewFilters configView state filters =
 {-| The view function which take the configuration the state and a list of filters
 -}
 view : Config msg filter -> State -> List filter -> Html msg
-view ((Config { title, toMsg }) as configView) ((State open selectedFilters) as state) filters =
+view ((Config { title, toMsg }) as configView) ((State open selectedFilters openSubFilters) as state) filters =
     div []
-        [ button [ onClick (State (not open) selectedFilters) toMsg ] [ text title ]
+        [ button [ onClick (State (not open) selectedFilters openSubFilters) toMsg ] [ text title ]
         , div
             [ style "display"
                 (if open then
@@ -178,16 +200,39 @@ onClick state toMsg =
 {-| Update the set of selected filters
 -}
 toggleFilter : String -> State -> State
-toggleFilter filter ((State open selectedFilters) as state) =
+toggleFilter filter ((State open selectedFilters openSubFilters) as state) =
     if Set.member filter selectedFilters then
-        State open (Set.remove filter selectedFilters)
+        State open (Set.remove filter selectedFilters) openSubFilters
 
     else
-        State open (Set.insert filter selectedFilters)
+        State open (Set.insert filter selectedFilters) openSubFilters
 
 
 {-| Return the set of the selected filters' id
 -}
 selectedIdFilters : State -> Set String
-selectedIdFilters (State _ selectedFilters) =
+selectedIdFilters (State _ selectedFilters _) =
     selectedFilters
+
+
+isFilterOpen : String -> Set String -> Bool
+isFilterOpen filterId openSubFilters =
+    Set.member filterId openSubFilters
+
+
+showSubFilters : Config msg filter -> filter -> State -> State
+showSubFilters (Config { toId }) filter (State open selectedFilters openSubFilters) =
+    let
+        openSubFiltersUpdated =
+            Set.insert (toId filter) openSubFilters
+    in
+    State open selectedFilters openSubFiltersUpdated
+
+
+hideSubFilters : Config msg filter -> filter -> State -> State
+hideSubFilters (Config { toId }) filter (State open selectedFilters openSubFilters) =
+    let
+        openSubFiltersUpdated =
+            Set.remove (toId filter) openSubFilters
+    in
+    State open selectedFilters openSubFiltersUpdated
