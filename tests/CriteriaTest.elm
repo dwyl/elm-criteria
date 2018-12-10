@@ -34,7 +34,7 @@ suite =
                     |> Query.fromHtml
                     |> Query.find [ tag "button" ]
                     |> Query.has [ text "My filters" ]
-        , test "All the filters are displayed as checkboxes" <|
+        , test "All the first level filters are displayed as checkboxes" <|
             \_ ->
                 let
                     state =
@@ -46,5 +46,21 @@ suite =
                 view
                     |> Query.fromHtml
                     |> Query.findAll [ tag "input" ]
-                    |> Query.count (Expect.equal 8)
+                    |> Query.count (Expect.equal 2)
+        , fuzz string "fuzz test the title of the filters" <|
+            \randomlyGeneratedString ->
+                let
+                    state =
+                        Criteria.init
+
+                    config =
+                        Fixtures.configWithTitle randomlyGeneratedString
+
+                    view =
+                        Criteria.view config state Fixtures.filters
+                in
+                view
+                    |> Query.fromHtml
+                    |> Query.find [ tag "button" ]
+                    |> Query.has [ text randomlyGeneratedString ]
         ]

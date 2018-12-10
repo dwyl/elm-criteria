@@ -125,26 +125,29 @@ viewToggleSubFilters ((Config { toId, toMsg, getSubFilters }) as c) state filter
 
         _ ->
             if isFilterOpen (toId filter) openSubFilters then
-                span [ onClick (hideSubFilters c filter state) toMsg ] [ arrowUp ]
+                span
+                    [ style "cursor" "pointer"
+                    , onClick (hideSubFilters c filter state) toMsg
+                    ]
+                    [ arrowUp ]
 
             else
-                span [ onClick (showSubFilters c filter state) toMsg ] [ arrowDown ]
+                span
+                    [ style "cursor" "pointer"
+                    , onClick (showSubFilters c filter state) toMsg
+                    ]
+                    [ arrowDown ]
 
 
 viewSubFilters : Config msg filter -> State -> List filter -> Html msg
 viewSubFilters configView state subFilters =
-    case subFilters of
-        [] ->
-            text ""
-
-        _ ->
-            div [] <| List.map (\subFilter -> viewFilter configView state subFilter) subFilters
+    div [ style "margin-left" "20px" ] <| List.map (\subFilter -> viewFilter configView state subFilter) subFilters
 
 
 viewFilter : Config msg filter -> State -> filter -> Html msg
 viewFilter ((Config { toMsg, toId, toString, getSubFilters }) as configView) ((State _ selectedFilters openSubFilters) as state) filter =
-    div [ style "margin-left" "20px" ]
-        [ label []
+    div []
+        [ label [ style "cursor" "pointer" ]
             [ input
                 [ type_ "checkbox"
                 , checked <| Set.member (toId filter) selectedFilters
@@ -154,17 +157,12 @@ viewFilter ((Config { toMsg, toId, toString, getSubFilters }) as configView) ((S
             , text <| toString filter
             ]
         , viewToggleSubFilters configView state filter openSubFilters
-        , if isFilterOpen (toId filter) openSubFilters then
+        , if isFilterOpen (toId filter) openSubFilters && not (List.isEmpty (getSubFilters filter)) then
             viewSubFilters configView state (getSubFilters filter)
 
           else
             text ""
         ]
-
-
-viewFilters : Config msg filter -> State -> List filter -> Html msg
-viewFilters configView state filters =
-    div [] <| List.map (\filter -> viewFilter configView state filter) filters
 
 
 {-| The view function which take the configuration the state and a list of filters
@@ -174,20 +172,16 @@ view ((Config { title, toMsg }) as configView) ((State open selectedFilters open
     div []
         [ button [ onClick (State (not open) selectedFilters openSubFilters) toMsg ] [ text title ]
         , div
-            [ style "display"
-                (if open then
-                    "block"
-
-                 else
-                    "none"
-                )
-            ]
-            [ viewFilters configView state filters ]
+            [ displayFilters open ]
+            (List.map
+                (viewFilter configView state)
+                filters
+            )
         ]
 
 
 
--- EVENT
+-- HELPERS
 
 
 {-| The onClick function pass the new state to the message defined with `toMsg`
@@ -236,3 +230,13 @@ hideSubFilters (Config { toId }) filter (State open selectedFilters openSubFilte
             Set.remove (toId filter) openSubFilters
     in
     State open selectedFilters openSubFiltersUpdated
+
+
+displayFilters : Bool -> Html.Attribute msg
+displayFilters open =
+    case open of
+        True ->
+            style "display" "block"
+
+        False ->
+            style "display" "none"
