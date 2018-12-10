@@ -3,7 +3,7 @@
     "name": "dwyl/elm-criteria",
     "summary": "A reusable dropdown/filters Elm package",
     "license": "BSD-3-Clause",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "exposed-modules": [
         "Criteria"
     ],
@@ -11,7 +11,8 @@
     "dependencies": {
         "elm/core": "1.0.0 <= v < 2.0.0",
         "elm/html": "1.0.0 <= v < 2.0.0",
-        "elm/json": "1.1.2 <= v < 2.0.0"
+        "elm/json": "1.1.2 <= v < 2.0.0",
+        "elm/svg": "1.0.1 <= v < 2.0.0"
     },
     "test-dependencies": {
         "elm-explorations/test": "1.2.0 <= v < 2.0.0"

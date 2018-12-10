@@ -1,4 +1,4 @@
-module Fixtures exposing (config, filters)
+module Fixtures exposing (config, configWithTitle, filters)
 
 import Criteria exposing (State, config)
 
@@ -26,6 +26,17 @@ config : Criteria.Config Msg Filter
 config =
     Criteria.config
         { title = "My filters"
+        , toMsg = UpdateCriteria
+        , toId = getFilterId
+        , toString = getFilterName
+        , getSubFilters = getSubFilters
+        }
+
+
+configWithTitle : String -> Criteria.Config Msg Filter
+configWithTitle title =
+    Criteria.config
+        { title = title
         , toMsg = UpdateCriteria
         , toId = getFilterId
         , toString = getFilterName

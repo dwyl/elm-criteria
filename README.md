@@ -4,7 +4,7 @@
 
 This Elm package lets you create a dropdown/filters UI:
 
-![filters](https://user-images.githubusercontent.com/6057298/49626564-5d62bb00-f9d2-11e8-8cc6-0238b85215f0.png)
+![filters](https://user-images.githubusercontent.com/6057298/49747519-7ce03900-fc9b-11e8-86f2-1c7a95e2602c.png)
 
 ## Use elm-criteria
 
@@ -66,7 +66,7 @@ view model =
 ```
 ## Examples
 
-See a [live example](https://dwyl.github.io/elm-criteria/example.html) and its [code]()
+See a [live example](https://dwyl.github.io/elm-criteria/example.html) and its [code](https://github.com/dwyl/elm-criteria/blob/master/examples/Example.elm)
 
 To run the exmple on your machine:
 - clone this repository `git clone git@github.com:dwyl/elm-criteria.git && cd elm-criteria`
