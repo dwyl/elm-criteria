@@ -4,7 +4,7 @@
 
 This Elm package lets you create a dropdown/filters UI:
 
-![filters](https://user-images.githubusercontent.com/6057298/49626564-5d62bb00-f9d2-11e8-8cc6-0238b85215f0.png)
+![filters](https://user-images.githubusercontent.com/6057298/49747519-7ce03900-fc9b-11e8-86f2-1c7a95e2602c.png)
 
 ## Use elm-criteria
 

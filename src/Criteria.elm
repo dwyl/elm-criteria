@@ -35,8 +35,6 @@ Have a look at a live [example] and its [code]
 
 -}
 
--- import ArrowDown exposing (arrowDown)
-
 import Html exposing (Attribute, Html, button, div, input, label, span, text)
 import Html.Attributes exposing (checked, style, type_)
 import Html.Events as E
