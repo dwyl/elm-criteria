@@ -64,9 +64,64 @@ view model =
           Criteria.view criteriaConfig model.criteria filters
         ]
 ```
+
+### Customise and set attributes
+
+`elm-criteria` expose a specific config function to define some html attributes
+to the main html element of the package.
+
+```
+criteriaConfig : Criteria.Config Msg Filter
+criteriaConfig =
+    let
+        defaultCustomisations =
+            Criteria.defaultCustomisations
+    in
+    Criteria.customConfig
+        { title = "My Customed filters"
+        , toMsg = UpdateCriteria
+        , toId = getFilterId
+        , toString = getFilterName
+        , getSubFilters = getSubFilters
+        , customisations =
+            { defaultCustomisations
+                | buttonAttrs = customButton
+                , filterLabelAttrs = customFilter
+            }
+        }
+```
+
+The `Criteria.defaultCustomisations` function return a `Criteria.Customisations filter msg`
+type which is a type alias of a record defined as the following:
+
+```type alias Customisations filter msg =
+    { mainDivAttrs : List (Attribute msg)
+    , buttonAttrs : List (Attribute msg)
+    , filtersDivAttrs : List (Attribute msg)
+    , filterDivAttrs : filter -> State -> List (Attribute msg)
+    , filterLabelAttrs : filter -> State -> List (Attribute msg)
+    , subFilterDivAttrs : List (Attribute msg)
+    , filterImgToggleAttrs : List (Attribute msg)
+    }
+```
+
+This type alias is directly accessible and the default values can be redefined
+as shown above, ie:
+```
+, customisations =
+    { defaultCustomisations
+        | buttonAttrs = customButton
+        , filterLabelAttrs = customFilter
+        ,...
+    }
+```
+
 ## Examples
 
-See a [live example](https://dwyl.github.io/elm-criteria/example.html) and its [code](https://github.com/dwyl/elm-criteria/blob/master/examples/Example.elm)
+See the default [live example](https://dwyl.github.io/elm-criteria/example.html) and its [code](https://github.com/dwyl/elm-criteria/blob/master/examples/Example.elm)
+
+See the [customised example](https://dwyl.github.io/elm-criteria/customised-example.html) and its
+[code](https://github.com/dwyl/elm-criteria/blob/master/examples/CustomExample.elm)
 
 To run the exmple on your machine:
 - clone this repository `git clone git@github.com:dwyl/elm-criteria.git && cd elm-criteria`
@@ -83,4 +138,5 @@ To run the tests make sure to have installed the dependencies of the package wit
 ## Releases
 | Version | Notes |
 | ------- | ----- |
+|  [**1.0.1**](https://github.com/dwyl/elm-criteria/releases/tag/1.0.1) | add toggle for sub-filters
 |  [**1.0.0**](https://github.com/dwyl/elm-criteria/releases/tag/1.0.0) | elm-criteria initial release

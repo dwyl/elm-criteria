@@ -2,8 +2,8 @@ module Criteria exposing
     ( view
     , Config, config
     , State, init
-    , selectedIdFilters
     , customConfig, defaultCustomisations
+    , selectedIdFilters
     )
 
 {-| This package help you create a hierarchy of "filters"
@@ -28,6 +28,11 @@ Have a look at a live [example] and its [code]
 # State
 
 @docs State, init
+
+
+# Customise
+
+@docs customConfig, defaultCustomisations
 
 
 # Helpers

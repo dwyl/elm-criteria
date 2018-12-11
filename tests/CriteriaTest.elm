@@ -63,4 +63,17 @@ suite =
                     |> Query.fromHtml
                     |> Query.find [ tag "button" ]
                     |> Query.has [ text randomlyGeneratedString ]
+        , test "button display attributes passed via the customised config" <|
+            \_ ->
+                let
+                    state =
+                        Criteria.init
+
+                    view =
+                        Criteria.view Fixtures.customConfig state Fixtures.filters
+                in
+                view
+                    |> Query.fromHtml
+                    |> Query.find [ tag "button" ]
+                    |> Query.has [ style "color" "red", class "elm-criteria-button" ]
         ]

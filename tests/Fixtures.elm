@@ -1,6 +1,8 @@
-module Fixtures exposing (config, configWithTitle, filters)
+module Fixtures exposing (config, configWithTitle, customConfig, filters)
 
 import Criteria exposing (State, config)
+import Html exposing (Attribute)
+import Html.Attributes exposing (class, style)
 
 
 type alias Filter =
@@ -42,6 +44,28 @@ configWithTitle title =
         , toString = getFilterName
         , getSubFilters = getSubFilters
         }
+
+
+customConfig : Criteria.Config Msg Filter
+customConfig =
+    let
+        defaultCustomisations =
+            Criteria.defaultCustomisations
+    in
+    Criteria.customConfig
+        { title = "My Customed filters"
+        , toMsg = UpdateCriteria
+        , toId = getFilterId
+        , toString = getFilterName
+        , getSubFilters = getSubFilters
+        , customisations =
+            { defaultCustomisations | buttonAttrs = customButton }
+        }
+
+
+customButton : List (Attribute Msg)
+customButton =
+    [ style "color" "red", class "elm-criteria-button" ]
 
 
 getFilterName : Filter -> String
