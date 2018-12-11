@@ -2,6 +2,7 @@ module Criteria exposing
     ( view
     , Config, config
     , State, init
+    , customConfig, defaultCustomisations
     , selectedIdFilters
     )
 
@@ -29,6 +30,11 @@ Have a look at a live [example] and its [code]
 @docs State, init
 
 
+# Customise
+
+@docs customConfig, defaultCustomisations
+
+
 # Helpers
 
 @docs selectedIdFilters
@@ -36,7 +42,7 @@ Have a look at a live [example] and its [code]
 -}
 
 import Html exposing (Attribute, Html, button, div, input, label, span, text)
-import Html.Attributes exposing (checked, style, type_)
+import Html.Attributes exposing (checked, class, style, type_)
 import Html.Events as E
 import Json.Decode as Json
 import Set exposing (Set, empty, insert, member, remove)
@@ -81,6 +87,7 @@ type Config msg filter
         , toId : filter -> String
         , toString : filter -> String
         , getSubFilters : filter -> List filter
+        , customisations : Customisations filter msg
         }
 
 
@@ -108,7 +115,72 @@ config { title, toMsg, toId, toString, getSubFilters } =
         , toId = toId
         , toString = toString
         , getSubFilters = getSubFilters
+        , customisations = defaultCustomisations
         }
+
+
+{-| Create a customised configuation.
+This function is similat to `config`.
+It takes one more value `customisations` which defined
+how to customise the element of the module
+-}
+customConfig :
+    { title : String
+    , toMsg : State -> msg
+    , toId : filter -> String
+    , toString : filter -> String
+    , getSubFilters : filter -> List filter
+    , customisations : Customisations filter msg
+    }
+    -> Config msg filter
+customConfig { title, toMsg, toId, toString, getSubFilters, customisations } =
+    Config
+        { title = title
+        , toMsg = toMsg
+        , toId = toId
+        , toString = toString
+        , getSubFilters = getSubFilters
+        , customisations = customisations
+        }
+
+
+
+-- CUSTOMISATIONS
+
+
+{-| The Customisations type alias define how the element can be customised.
+The functions are returning an `List (Attribute msg)` value, so a class, id,
+event... can be added to the html elements of the module
+-}
+type alias Customisations filter msg =
+    { mainDivAttrs : List (Attribute msg)
+    , buttonAttrs : List (Attribute msg)
+    , filtersDivAttrs : List (Attribute msg)
+    , filterDivAttrs : filter -> State -> List (Attribute msg)
+    , filterLabelAttrs : filter -> State -> List (Attribute msg)
+    , subFilterDivAttrs : List (Attribute msg)
+    , filterImgToggleAttrs : List (Attribute msg)
+    }
+
+
+{-| the `defaultCustomisations` function provide the default attribute values
+for elm-criteria. These values can be resetted with the function
+`customConfig`
+-}
+defaultCustomisations : Customisations filter msg
+defaultCustomisations =
+    { mainDivAttrs = []
+    , buttonAttrs = []
+    , filtersDivAttrs = []
+    , filterDivAttrs = \_ _ -> []
+    , filterLabelAttrs = \_ _ -> [ style "cursor" "pointer" ]
+    , subFilterDivAttrs = [ style "margin-left" "20px" ]
+    , filterImgToggleAttrs =
+        [ style "cursor" "pointer"
+        , style "display" "inline-block"
+        , style "vertical-align" "middle"
+        ]
+    }
 
 
 
@@ -116,7 +188,7 @@ config { title, toMsg, toId, toString, getSubFilters } =
 
 
 viewToggleSubFilters : Config msg filter -> State -> filter -> Set String -> Html msg
-viewToggleSubFilters ((Config { toId, toMsg, getSubFilters }) as c) state filter openSubFilters =
+viewToggleSubFilters ((Config { toId, toMsg, getSubFilters, customisations }) as c) state filter openSubFilters =
     case getSubFilters filter of
         [] ->
             text ""
@@ -124,28 +196,31 @@ viewToggleSubFilters ((Config { toId, toMsg, getSubFilters }) as c) state filter
         _ ->
             if isFilterOpen (toId filter) openSubFilters then
                 span
-                    [ style "cursor" "pointer"
-                    , onClick (hideSubFilters c filter state) toMsg
-                    ]
+                    ([ onClick (hideSubFilters c filter state) toMsg
+                     ]
+                        ++ customisations.filterImgToggleAttrs
+                    )
                     [ arrowUp ]
 
             else
                 span
-                    [ style "cursor" "pointer"
-                    , onClick (showSubFilters c filter state) toMsg
-                    ]
+                    ([ onClick (showSubFilters c filter state) toMsg
+                     ]
+                        ++ customisations.filterImgToggleAttrs
+                    )
                     [ arrowDown ]
 
 
 viewSubFilters : Config msg filter -> State -> List filter -> Html msg
-viewSubFilters configView state subFilters =
-    div [ style "margin-left" "20px" ] <| List.map (\subFilter -> viewFilter configView state subFilter) subFilters
+viewSubFilters ((Config { customisations }) as configView) state subFilters =
+    div ([] ++ customisations.subFilterDivAttrs) <|
+        List.map (\subFilter -> viewFilter configView state subFilter) subFilters
 
 
 viewFilter : Config msg filter -> State -> filter -> Html msg
-viewFilter ((Config { toMsg, toId, toString, getSubFilters }) as configView) ((State _ selectedFilters openSubFilters) as state) filter =
-    div []
-        [ label [ style "cursor" "pointer" ]
+viewFilter ((Config { toMsg, toId, toString, getSubFilters, customisations }) as configView) ((State _ selectedFilters openSubFilters) as state) filter =
+    div ([] ++ customisations.filterDivAttrs filter state)
+        [ label ([] ++ customisations.filterLabelAttrs filter state)
             [ input
                 [ type_ "checkbox"
                 , checked <| Set.member (toId filter) selectedFilters
@@ -166,11 +241,15 @@ viewFilter ((Config { toMsg, toId, toString, getSubFilters }) as configView) ((S
 {-| The view function which take the configuration the state and a list of filters
 -}
 view : Config msg filter -> State -> List filter -> Html msg
-view ((Config { title, toMsg }) as configView) ((State open selectedFilters openSubFilters) as state) filters =
-    div []
-        [ button [ onClick (State (not open) selectedFilters openSubFilters) toMsg ] [ text title ]
+view ((Config { title, toMsg, customisations }) as configView) ((State open selectedFilters openSubFilters) as state) filters =
+    div ([] ++ customisations.mainDivAttrs)
+        [ button
+            ([ onClick (State (not open) selectedFilters openSubFilters) toMsg ]
+                ++ customisations.buttonAttrs
+            )
+            [ text title ]
         , div
-            [ displayFilters open ]
+            ([ displayFilters open ] ++ customisations.filtersDivAttrs)
             (List.map
                 (viewFilter configView state)
                 filters
