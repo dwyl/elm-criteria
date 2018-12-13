@@ -53,25 +53,30 @@ import SvgImages exposing (arrowDown, arrowUp)
 -- STATE
 
 
+type alias FilterId =
+    String
+
+
 {-| Define if the hierarchy of filters is open
 the set of the selected filters
 the set of filters where the sub-filters are displayed
 State False Set.empty
 -}
 type State
-    = State Bool (Set String) (Set String)
+    = State Bool (Set FilterId) (Set FilterId)
 
 
-{-| Initialise the state, ie filters are hidden and no filter selected yet
+{-| Initialise the state, ie filters are hidden and filters are selected based
+on the list of ids passed as first argument to the `init` function
 
     import Criteria
 
-    Criteria.init
+    Criteria.init ["idFilter1", "idFilter5"]
 
 -}
-init : State
-init =
-    State False Set.empty Set.empty
+init : List FilterId -> State
+init selectedFilterIds =
+    State False (Set.fromList selectedFilterIds) Set.empty
 
 
 
@@ -84,7 +89,7 @@ type Config msg filter
     = Config
         { title : String
         , toMsg : State -> msg
-        , toId : filter -> String
+        , toId : filter -> FilterId
         , toString : filter -> String
         , getSubFilters : filter -> List filter
         , customisations : Customisations filter msg
@@ -103,7 +108,7 @@ type Config msg filter
 config :
     { title : String
     , toMsg : State -> msg
-    , toId : filter -> String
+    , toId : filter -> FilterId
     , toString : filter -> String
     , getSubFilters : filter -> List filter
     }
@@ -127,7 +132,7 @@ how to customise the element of the module
 customConfig :
     { title : String
     , toMsg : State -> msg
-    , toId : filter -> String
+    , toId : filter -> FilterId
     , toString : filter -> String
     , getSubFilters : filter -> List filter
     , customisations : Customisations filter msg
@@ -281,12 +286,12 @@ toggleFilter filter ((State open selectedFilters openSubFilters) as state) =
 
 {-| Return the set of the selected filters' id
 -}
-selectedIdFilters : State -> Set String
+selectedIdFilters : State -> Set FilterId
 selectedIdFilters (State _ selectedFilters _) =
     selectedFilters
 
 
-isFilterOpen : String -> Set String -> Bool
+isFilterOpen : String -> Set FilterId -> Bool
 isFilterOpen filterId openSubFilters =
     Set.member filterId openSubFilters
 

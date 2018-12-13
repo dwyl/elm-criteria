@@ -22,7 +22,7 @@ type alias Model =
 
 init : Model
 init =
-    { criteria = Criteria.init }
+    { criteria = Criteria.init [] }
 
 
 criteriaConfig : Criteria.Config Msg Filter

@@ -19,7 +19,16 @@ type alias Model =
 
 init : Model
 init =
-    { criteria = Criteria.init }
+    { criteria = Criteria.init [] }
+```
+
+To initiliase the state with some pre-selected filters, pass an array of the filters' id
+as a parameter to `Criteria.init`, for example:
+
+```elm
+init : Model
+init =
+    { criteria = Criteria.init ["filterId1", "filterId2"] }
 ```
 
 - Define the configuration that will be passed to the view
@@ -138,5 +147,6 @@ To run the tests make sure to have installed the dependencies of the package wit
 ## Releases
 | Version | Notes |
 | ------- | ----- |
+|  [**1.1.0**](https://github.com/dwyl/elm-criteria/releases/tag/1.1.o) | add API functions to define attributes to the main elements (ie button, label, divs)
 |  [**1.0.1**](https://github.com/dwyl/elm-criteria/releases/tag/1.0.1) | add toggle for sub-filters
 |  [**1.0.0**](https://github.com/dwyl/elm-criteria/releases/tag/1.0.0) | elm-criteria initial release
