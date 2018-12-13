@@ -41,6 +41,7 @@ criteriaConfig =
             { defaultCustomisations
                 | buttonAttrs = customButton
                 , filterLabelAttrs = customFilter
+                , filterNameAttrs = customFilterName
             }
         }
 
@@ -57,6 +58,11 @@ customFilter filter state =
 
     else
         []
+
+
+customFilterName : Filter -> Criteria.State -> List (Html.Attribute Msg)
+customFilterName filter state =
+    [ style "padding-left" "20px" ]
 
 
 

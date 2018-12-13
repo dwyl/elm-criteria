@@ -163,6 +163,7 @@ type alias Customisations filter msg =
     , filtersDivAttrs : List (Attribute msg)
     , filterDivAttrs : filter -> State -> List (Attribute msg)
     , filterLabelAttrs : filter -> State -> List (Attribute msg)
+    , filterNameAttrs : filter -> State -> List (Attribute msg)
     , subFilterDivAttrs : List (Attribute msg)
     , filterImgToggleAttrs : List (Attribute msg)
     }
@@ -179,6 +180,7 @@ defaultCustomisations =
     , filtersDivAttrs = []
     , filterDivAttrs = \_ _ -> []
     , filterLabelAttrs = \_ _ -> [ style "cursor" "pointer" ]
+    , filterNameAttrs = \_ _ -> []
     , subFilterDivAttrs = [ style "margin-left" "20px" ]
     , filterImgToggleAttrs =
         [ style "cursor" "pointer"
@@ -232,7 +234,7 @@ viewFilter ((Config { toMsg, toId, toString, getSubFilters, customisations }) as
                 , onClick (toggleFilter (toId filter) state) toMsg
                 ]
                 []
-            , text <| toString filter
+            , span ([] ++ customisations.filterNameAttrs filter state) [ text <| toString filter ]
             ]
         , viewToggleSubFilters configView state filter openSubFilters
         , if isFilterOpen (toId filter) openSubFilters && not (List.isEmpty (getSubFilters filter)) then
