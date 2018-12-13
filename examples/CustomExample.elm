@@ -22,7 +22,7 @@ type alias Model =
 
 init : Model
 init =
-    { criteria = Criteria.init }
+    { criteria = Criteria.init [] }
 
 
 criteriaConfig : Criteria.Config Msg Filter
@@ -41,6 +41,7 @@ criteriaConfig =
             { defaultCustomisations
                 | buttonAttrs = customButton
                 , filterLabelAttrs = customFilter
+                , filterNameAttrs = customFilterName
             }
         }
 
@@ -57,6 +58,11 @@ customFilter filter state =
 
     else
         []
+
+
+customFilterName : Filter -> Criteria.State -> List (Html.Attribute Msg)
+customFilterName filter state =
+    [ style "padding-left" "20px" ]
 
 
 

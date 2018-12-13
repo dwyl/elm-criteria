@@ -18,14 +18,14 @@ suite =
             \_ ->
                 let
                     state =
-                        Criteria.init
+                        Criteria.init []
                 in
                 Expect.equal (Criteria.selectedIdFilters state) Set.empty
         , test "The open/close button display the title passed in the config" <|
             \_ ->
                 let
                     state =
-                        Criteria.init
+                        Criteria.init []
 
                     view =
                         Criteria.view Fixtures.config state Fixtures.filters
@@ -38,7 +38,7 @@ suite =
             \_ ->
                 let
                     state =
-                        Criteria.init
+                        Criteria.init []
 
                     view =
                         Criteria.view Fixtures.config state Fixtures.filters
@@ -51,7 +51,7 @@ suite =
             \randomlyGeneratedString ->
                 let
                     state =
-                        Criteria.init
+                        Criteria.init []
 
                     config =
                         Fixtures.configWithTitle randomlyGeneratedString
@@ -67,7 +67,7 @@ suite =
             \_ ->
                 let
                     state =
-                        Criteria.init
+                        Criteria.init []
 
                     view =
                         Criteria.view Fixtures.customConfig state Fixtures.filters
@@ -76,4 +76,11 @@ suite =
                     |> Query.fromHtml
                     |> Query.find [ tag "button" ]
                     |> Query.has [ style "color" "red", class "elm-criteria-button" ]
+        , test "initialise with pre-selectd filters" <|
+            \_ ->
+                let
+                    state =
+                        Criteria.init [ "id:filter1", "id:filter2" ]
+                in
+                Expect.equal (Criteria.selectedIdFilters state) (Set.fromList [ "id:filter1", "id:filter2" ])
         ]
