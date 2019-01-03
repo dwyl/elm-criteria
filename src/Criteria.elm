@@ -4,6 +4,7 @@ module Criteria exposing
     , State, init
     , customConfig, defaultCustomisations
     , selectedIdFilters
+    , unselectFilter
     )
 
 {-| This package help you create a hierarchy of "filters"
@@ -38,6 +39,7 @@ Have a look at a live [example] and its [code]
 # Helpers
 
 @docs selectedIdFilters
+@docs unselectFilter
 
 -}
 
@@ -278,7 +280,7 @@ onClick state toMsg =
 {-| Update the set of selected filters
 -}
 toggleFilter : String -> State -> State
-toggleFilter filter ((State open selectedFilters openSubFilters) as state) =
+toggleFilter filter (State open selectedFilters openSubFilters) =
     if Set.member filter selectedFilters then
         State open (Set.remove filter selectedFilters) openSubFilters
 
@@ -291,6 +293,17 @@ toggleFilter filter ((State open selectedFilters openSubFilters) as state) =
 selectedIdFilters : State -> Set FilterId
 selectedIdFilters (State _ selectedFilters _) =
     selectedFilters
+
+
+{-| Unselect a filter
+-}
+unselectFilter : FilterId -> State -> State
+unselectFilter filter ((State open selectedFilters openSubFilters) as state) =
+    if Set.member filter selectedFilters then
+        State open (Set.remove filter selectedFilters) openSubFilters
+
+    else
+        state
 
 
 isFilterOpen : String -> Set FilterId -> Bool

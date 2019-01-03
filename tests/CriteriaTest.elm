@@ -83,4 +83,17 @@ suite =
                         Criteria.init [ "id:filter1", "id:filter2" ]
                 in
                 Expect.equal (Criteria.selectedIdFilters state) (Set.fromList [ "id:filter1", "id:filter2" ])
+        , test "unselect filter by id" <|
+            \_ ->
+                let
+                    state =
+                        Criteria.init [ "id:filter1", "id:filter2" ]
+
+                    newState =
+                        state
+                            |> Criteria.unselectFilter "id:filter1"
+                            |> Criteria.unselectFilter "wrongFilterId"
+                in
+                Expect.equal (Criteria.selectedIdFilters newState)
+                    (Set.fromList [ "id:filter2" ])
         ]
