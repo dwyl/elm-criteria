@@ -5,6 +5,9 @@ module Criteria exposing
     , customConfig, defaultCustomisations
     , selectedIdFilters
     , unselectFilter
+    , openFilters
+    , closeFilters
+    , isOpen
     )
 
 {-| This package help you create a hierarchy of "filters"
@@ -40,6 +43,9 @@ Have a look at a live [example] and its [code]
 
 @docs selectedIdFilters
 @docs unselectFilter
+@docs openFilters
+@docs closeFilters
+@docs isOpen
 
 -}
 
@@ -337,3 +343,32 @@ displayFilters open =
 
         False ->
             style "display" "none"
+
+
+{-| Set the open state value to True
+-}
+openFilters : State -> State
+openFilters ((State open selectedFilters openSubFilters) as state) =
+    if open then
+        state
+
+    else
+        State True selectedFilters openSubFilters
+
+
+{-| Set the open state value to False
+-}
+closeFilters : State -> State
+closeFilters ((State open selectedFilters openSubFilters) as state) =
+    if open then
+        State False selectedFilters openSubFilters
+
+    else
+        state
+
+
+{-| Return the open state value
+-}
+isOpen : State -> Bool
+isOpen (State open _ _) =
+    open
