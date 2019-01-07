@@ -147,7 +147,7 @@ To run the tests make sure to have installed the dependencies of the package wit
 ## Releases
 | Version | Notes |
 | ------- | ----- |
-|  [**2.2.0**](https://github.com/dwyl/elm-criteria/releases/tag/2.1.0) | Expose `openFilters` `closeFilters` `isOpen` functions
+|  [**2.2.0**](https://github.com/dwyl/elm-criteria/releases/tag/2.2.0) | Expose `openFilters` `closeFilters` `isOpen` functions
 |  [**2.1.0**](https://github.com/dwyl/elm-criteria/releases/tag/2.1.0) | Expose `unselectFilter` function
 |  [**2.0.0**](https://github.com/dwyl/elm-criteria/releases/tag/2.0.0) | Update `init`: first parameter is list of selected filters
 |  [**1.1.0**](https://github.com/dwyl/elm-criteria/releases/tag/1.1.0) | add API functions to define attributes to the main elements (ie button, label, divs)
