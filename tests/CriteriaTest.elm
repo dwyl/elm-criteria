@@ -96,4 +96,24 @@ suite =
                 in
                 Expect.equal (Criteria.selectedIdFilters newState)
                     (Set.fromList [ "id:filter2" ])
+        , test "open filters" <|
+            \_ ->
+                let
+                    state =
+                        Criteria.init []
+                            |> Criteria.openFilters
+                            |> Criteria.openFilters
+                            |> Criteria.openFilters
+                in
+                Expect.equal (Criteria.isOpen state) True
+        , test "close filters" <|
+            \_ ->
+                let
+                    state =
+                        Criteria.init []
+                            |> Criteria.openFilters
+                            |> Criteria.closeFilters
+                            |> Criteria.closeFilters
+                in
+                Expect.equal (Criteria.isOpen state) False
         ]
