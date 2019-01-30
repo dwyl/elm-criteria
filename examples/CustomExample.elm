@@ -46,9 +46,13 @@ criteriaConfig =
         }
 
 
-customButton : List (Html.Attribute Msg)
-customButton =
-    [ style "color" "red", onMouseDown (Log "hello") ]
+customButton : Criteria.State -> List (Html.Attribute Msg)
+customButton state =
+    if Criteria.isOpen state then
+        [ style "color" "red", onMouseDown (Log "hello") ]
+
+    else
+        [ style "color" "blue", onMouseDown (Log "hello") ]
 
 
 customFilter : Filter -> Criteria.State -> List (Html.Attribute Msg)
