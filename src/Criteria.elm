@@ -167,7 +167,7 @@ event... can be added to the html elements of the module
 -}
 type alias Customisations filter msg =
     { mainDivAttrs : List (Attribute msg)
-    , buttonAttrs : List (Attribute msg)
+    , buttonAttrs : State -> List (Attribute msg)
     , filtersDivAttrs : List (Attribute msg)
     , filterDivAttrs : filter -> State -> List (Attribute msg)
     , filterLabelAttrs : filter -> State -> List (Attribute msg)
@@ -184,7 +184,7 @@ for elm-criteria. These values can be resetted with the function
 defaultCustomisations : Customisations filter msg
 defaultCustomisations =
     { mainDivAttrs = []
-    , buttonAttrs = []
+    , buttonAttrs = \_ -> []
     , filtersDivAttrs = []
     , filterDivAttrs = \_ _ -> []
     , filterLabelAttrs = \_ _ -> [ style "cursor" "pointer" ]
@@ -260,7 +260,7 @@ view ((Config { title, toMsg, customisations }) as configView) ((State open sele
     div ([] ++ customisations.mainDivAttrs)
         [ button
             ([ onClick (State (not open) selectedFilters openSubFilters) toMsg ]
-                ++ customisations.buttonAttrs
+                ++ customisations.buttonAttrs state
             )
             [ text title ]
         , div

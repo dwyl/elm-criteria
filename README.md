@@ -105,7 +105,7 @@ type which is a type alias of a record defined as the following:
 
 ```type alias Customisations filter msg =
     { mainDivAttrs : List (Attribute msg)
-    , buttonAttrs : List (Attribute msg)
+    , buttonAttrs : State -> List (Attribute msg)
     , filtersDivAttrs : List (Attribute msg)
     , filterDivAttrs : filter -> State -> List (Attribute msg)
     , filterLabelAttrs : filter -> State -> List (Attribute msg)

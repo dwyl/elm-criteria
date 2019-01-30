@@ -63,8 +63,8 @@ customConfig =
         }
 
 
-customButton : List (Attribute Msg)
-customButton =
+customButton : Criteria.State -> List (Attribute Msg)
+customButton _ =
     [ style "color" "red", class "elm-criteria-button" ]
 
 

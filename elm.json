@@ -3,7 +3,7 @@
     "name": "dwyl/elm-criteria",
     "summary": "A reusable dropdown/filters Elm package",
     "license": "BSD-3-Clause",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "exposed-modules": [
         "Criteria"
     ],
