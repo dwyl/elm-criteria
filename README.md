@@ -1,6 +1,6 @@
 # elm-criteria
 [![Build Status](https://travis-ci.org/dwyl/elm-criteria.svg?branch=master)](https://travis-ci.org/dwyl/elm-criteria)
-[![HitCount](http://hits.dwyl.io/dwyl/elm-criteria.svg)](http://hits.dwyl.io/dwyl/elm-criteria)
+[![HitCount](http://hits.dwyl.com/dwyl/elm-criteria.svg)](http://hits.dwyl.com/dwyl/elm-criteria)
 
 This Elm package lets you create a dropdown/filters UI:
 
